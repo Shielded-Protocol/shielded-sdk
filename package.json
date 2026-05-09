@@ -1,0 +1,15 @@
+{
+  "name": "shielded-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TypeScript SDK for the Shielded Protocol",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "prettier": "^3.1.1"
+  }
+}
