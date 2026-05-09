@@ -12,7 +12,8 @@ describe('Commitment', () => {
     expect(note.nullifier).toBeDefined();
     expect(note.secret).toBeDefined();
     
-    // Commitment should be a hex string starting with 0x (or just hex)
+    // Commitment should be a string (large number as string)
     expect(typeof note.commitment).toBe('string');
+    expect(BigInt(note.commitment) > 0n).toBe(true);
   });
 });

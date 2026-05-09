@@ -10,8 +10,9 @@ import type { ShieldedNote } from './types';
 export async function createNote(amount: bigint, tokenId: bigint): Promise<ShieldedNote> {
   const poseidon = await buildPoseidon();
   const secret = BigInt('0x' + randomBytes(31).toString('hex'));
+  
   const commitment = poseidon([secret, amount, tokenId]);
-  const nullifier = poseidon([secret, BigInt(1)]);
+  const nullifier = poseidon([secret]);
 
   return {
     secret,
@@ -37,14 +38,22 @@ export function serializeNote(note: ShieldedNote): string {
   });
 }
 
-export function deserializeNote(raw: string): ShieldedNote {
+export async function deserializeNote(raw: string): Promise<ShieldedNote> {
+  const poseidon = await buildPoseidon();
   const parsed = JSON.parse(raw);
+  const secret = BigInt(parsed.secret);
+  const amount = BigInt(parsed.amount);
+  const tokenId = BigInt(parsed.tokenId);
+  
+  const commitment = poseidon([secret, amount, tokenId]);
+  const nullifier = poseidon([secret]);
+
   return {
-    secret: BigInt(parsed.secret),
-    amount: BigInt(parsed.amount),
-    tokenId: BigInt(parsed.tokenId),
-    commitment: '',  // recompute
-    nullifier: '',   // recompute
+    secret,
+    amount,
+    tokenId,
+    commitment: poseidon.F.toString(commitment),
+    nullifier: poseidon.F.toString(nullifier),
     index: parsed.index,
     spent: false,
   };
